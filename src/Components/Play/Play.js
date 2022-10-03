@@ -1,6 +1,7 @@
 import './Play.css';
 
 import React, { useEffect, useState } from 'react';
+import { currentPlayerScore, highScoreList } from '../../Service/localStorageKeys';
 
 import CardSet from '../Card/CardSet';
 import { getRandomCard } from '../../Service/cardService';
@@ -15,6 +16,11 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
   const [playerMessage, setPlayerMessage] = useState('');
   const [dealerMessage, setDealerMessage] = useState('');
 
+  const [roundState, setRoundState] = useState({
+    won: false,
+    tie: false,
+    lost: false,
+  });
   const [disableBtns, setDisableBtns] = useState(false);
 
 
@@ -33,29 +39,62 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
   }, [playerScore]);
 
   useEffect(() => {
+    const tieMsg = 'Tie!';
+    const winnerMsg = 'The winner! 🏆';
+    const looserMsg = 'Looser!';
+
     setTimeout(() => {
       if (disableBtns === true) {
         if (dealerScore === playerScore) {
-          setPlayerMessage('Tie!');
-          setDealerMessage('Tie!');
-        } else if (dealerScore === 21) {
-          setDealerMessage('The winner! 🏆');
-          setPlayerMessage('Looser!');
+          setDealerMessage(tieMsg);
+          setPlayerMessage(tieMsg);
+          setRoundState({ won: false, tie: true, lost: false });
+          // } else if (dealerScore === 21) {
+          //   setDealerMessage(winnerMsg);
+          //   setPlayerMessage(looserMsg);
+          //   setRoundState({won: false, tie: false, lost: true });
         } else if (dealerScore > 21) {
-          setDealerMessage('Looser!');
-          setPlayerMessage('The winner! 🏆');
-        } else if (playerScore > 21) {
-          setDealerMessage('The winner! 🏆');
-          setPlayerMessage('Looser!');
-        } else if (dealerScore > playerScore) {
-          setDealerMessage('The winner! 🏆');
-          setPlayerMessage('Looser!');
+          setDealerMessage(looserMsg);
+          setPlayerMessage(winnerMsg);
+          setRoundState({ won: true, tie: false, lost: false });
+        } else if (playerScore > 21 || dealerScore > playerScore || dealerScore === 21) {
+          setDealerMessage(winnerMsg);
+          setPlayerMessage(looserMsg);
+          setRoundState({ won: false, tie: false, lost: true });
         } else if (dealerScore < playerScore) {
           setDealerDeck((prevDeck) => [...prevDeck, getRandomCard()]);
+        } else {
         }
       }
     }, 500);
   }, [playerScore, dealerScore, disableBtns]);
+
+  useEffect(() => {
+    const currentOverallScore = localStorage.getItem(currentPlayerScore);
+
+    if (roundState.won === true) {
+      if (currentOverallScore === null) {
+        localStorage.setItem(currentPlayerScore, playerScore);
+      } else {
+        localStorage.setItem(currentPlayerScore, parseInt(currentOverallScore) + playerScore);
+      }
+    }
+
+    if (roundState.lost === true) {
+      const highScoreListData = localStorage.getItem(highScoreList);
+      if (currentOverallScore !== null) {
+        if (highScoreListData === null) {
+          localStorage.setItem('highScoreList', JSON.stringify([{ name: playerName, score: currentOverallScore }]));
+        } else {
+          const newHighScoreList = JSON.parse(highScoreListData);
+          newHighScoreList.push({ name: playerName, score: currentOverallScore });
+          newHighScoreList.sort((a, b) => b.score - a.score)
+          localStorage.setItem('highScoreList', JSON.stringify(newHighScoreList));
+        }
+      }
+      localStorage.removeItem(currentPlayerScore);
+    }
+  }, [roundState, playerName, playerScore]);
 
   const calculateScore = (deck, setScore) => {
     let score = 0;
@@ -78,8 +117,18 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
     setDisableBtns(true);
   };
 
-  const handleReset = () => {
-    setStageModeToHomeScreen();
+  const handleNextRound = () => {
+    setDealerDeck([getRandomCard()]);
+    setPlayerDeck([getRandomCard(), getRandomCard()]);
+    setRoundState({
+      won: false,
+      tie: false,
+      lost: false,
+    });
+    setDealerMessage('');
+    setPlayerMessage('');
+
+    setDisableBtns(false);
   };
 
 
@@ -95,7 +144,14 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
       </button>
       <button disabled={disableBtns} onClick={handleStandBtn}>Stand</button>
       <br />
-      <button onClick={handleReset}>Go back to start</button>
+      {
+        (roundState.won === true || roundState.tie === true)
+        && <button onClick={handleNextRound}>Next round</button>
+      }
+      {
+        (roundState.lost === true)
+        && <button onClick={() => setStageModeToHomeScreen()}>Go back to start</button>
+      }
     </div>
   );
 };
