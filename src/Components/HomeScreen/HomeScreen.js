@@ -4,7 +4,7 @@ const HomeScreen = ({ stageMode, setStageMode, playerName, setPlayerName }) => {
   return (
     <div>
       <img src={'./Images/blackjack-logo.png'} alt='home-screen-logo' className='logo' />
-      <h2>Player name</h2>
+      <h2>Enter player name</h2>
       <input type={'text'} autoFocus value={playerName} onChange={(e) => setPlayerName(e.target.value)} />
       <button
         disabled={playerName === ''}

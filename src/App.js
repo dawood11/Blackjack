@@ -7,12 +7,16 @@ import HomeScreen from './Components/HomeScreen/HomeScreen';
 import Play from './Components/Play/Play';
 
 const App = () => {
-  const [playerName, setPlayerName] = useState('DDDD');
+  const [playerName, setPlayerName] = useState('');
   const [stageMode, setStageMode] = useState({
     homeScreen: true,
     play: false,
     highscore: false,
   });
+
+  useEffect(() => {
+    setPlayerName('');
+  }, [stageMode]);
 
   useEffect(() => {
     console.log(playerName);
