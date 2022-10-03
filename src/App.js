@@ -15,7 +15,9 @@ const App = () => {
   });
 
   useEffect(() => {
-    setPlayerName('');
+    if (stageMode.highscore === false && stageMode.play === false) {
+      setPlayerName('');
+    }
   }, [stageMode]);
 
   return (

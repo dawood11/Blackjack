@@ -84,12 +84,12 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
       const highScoreListData = localStorage.getItem(highScoreList);
       if (currentOverallScore !== null) {
         if (highScoreListData === null) {
-          localStorage.setItem('highScoreList', JSON.stringify([{ name: playerName, score: currentOverallScore }]));
+          localStorage.setItem(highScoreList, JSON.stringify([{ name: playerName, score: currentOverallScore }]));
         } else {
           const newHighScoreList = JSON.parse(highScoreListData);
           newHighScoreList.push({ name: playerName, score: currentOverallScore });
           newHighScoreList.sort((a, b) => b.score - a.score)
-          localStorage.setItem('highScoreList', JSON.stringify(newHighScoreList));
+          localStorage.setItem(highScoreList, JSON.stringify(newHighScoreList));
         }
       }
       localStorage.removeItem(currentPlayerScore);
