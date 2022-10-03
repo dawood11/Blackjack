@@ -131,7 +131,6 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
   return (
     <div>
       <img src={'./Images/blackjack-logo.png'} alt='home-screen-logo' className='play_logo' />
-      <h1>Velkommen {playerName}</h1>
       <CardSet roleName={'Dealer'} score={dealerScore} cardsInHand={dealerDeck} msg={dealerMessage} />
       <hr />
       <CardSet roleName={'Player'} score={playerScore} cardsInHand={playerDeck} msg={playerMessage} />
