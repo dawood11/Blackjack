@@ -13,7 +13,7 @@ button, input {
   border-radius: 5px;
 }
 
-button:hover {
+button:hover:enabled{
   cursor: pointer;
   background-color: lightgrey;
 }
