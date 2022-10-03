@@ -113,10 +113,6 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
     setScore(score);
   };
 
-  const handleStandBtn = () => {
-    setDisableBtns(true);
-  };
-
   const handleNextRound = () => {
     setDealerDeck([getRandomCard()]);
     setPlayerDeck([getRandomCard(), getRandomCard()]);
@@ -142,7 +138,7 @@ const Play = ({ setStageModeToHomeScreen, playerName }) => {
       <button disabled={disableBtns} onClick={() => setPlayerDeck((prevDeck) => [...prevDeck, getRandomCard()])}>
         Hit
       </button>
-      <button disabled={disableBtns} onClick={handleStandBtn}>Stand</button>
+      <button disabled={disableBtns} onClick={() => setDisableBtns(true)}>Stand</button>
       <br />
       {
         (roundState.won === true || roundState.tie === true)
