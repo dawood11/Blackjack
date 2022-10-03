@@ -18,10 +18,6 @@ const App = () => {
     setPlayerName('');
   }, [stageMode]);
 
-  useEffect(() => {
-    console.log(playerName);
-  }, [playerName]);
-
   return (
     <div className='App'>
       {stageMode.homeScreen && <HomeScreen stageMode={stageMode} setStageMode={setStageMode} playerName={playerName} setPlayerName={setPlayerName} />}
